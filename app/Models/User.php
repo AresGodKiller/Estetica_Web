@@ -1,32 +1,69 @@
 <?php
-
+ 
 namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+ 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ 
+/**
+ * Modelo User — Axel Johab Rodríguez Ortiz (23151212)
+ *
+ * Representa tanto a clientes como a administradores del sistema.
+ * El rol se distingue mediante el campo 'rol' (cliente | administrador).
+ *
+ * Relaciones:
+ *  - hasMany(Cita) → Un usuario puede tener muchas citas agendadas
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+ 
+    protected $fillable = [
+        'nombre',
+        'apellido',
+        'telefono',
+        'email',
+        'password',
+        'rol',
+        'activo',
+    ];
+ 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+ 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'activo'            => 'boolean',
         ];
+    }
+ 
+    // ─── Relaciones ───────────────────────────────────────────────
+ 
+    /**
+     * Un usuario (cliente) puede tener muchas citas.
+     * Relación: uno a muchos
+     */
+    public function citas(): HasMany
+    {
+        return $this->hasMany(Cita::class);
+    }
+ 
+    // ─── Helpers ──────────────────────────────────────────────────
+ 
+    public function esAdministrador(): bool
+    {
+        return $this->rol === 'administrador';
+    }
+ 
+    public function nombreCompleto(): string
+    {
+        return "{$this->nombre} {$this->apellido}";
     }
 }
