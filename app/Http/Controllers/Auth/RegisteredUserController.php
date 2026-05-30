@@ -20,27 +20,32 @@ class RegisteredUserController extends Controller
     }
 
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'nombre'   => ['required', 'string', 'max:255'],
-            'apellido' => ['required', 'string', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:20'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+{
+    $request->validate([
+        'nombre'   => ['required', 'string', 'max:255'],
+        'apellido' => ['required', 'string', 'max:255'],
+        'telefono' => ['nullable', 'string', 'max:20'],
+        'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $user = User::create([
-            'nombre'   => $request->nombre,
-            'apellido' => $request->apellido,
-            'telefono' => $request->telefono,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'rol'      => 'cliente',
-        ]);
+    $user = User::create([
+        'nombre'   => $request->nombre,
+        'apellido' => $request->apellido,
+        'telefono' => $request->telefono,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+        'rol'      => 'cliente',
+    ]);
 
-        event(new Registered($user));
-        Auth::login($user);
+    event(new Registered($user));
+    Auth::login($user);
 
-        return redirect()->route('dashboard');
+    // Redirigir según rol
+    if ($user->esAdministrador()) {
+        return redirect()->route('admin.dashboard');
     }
+
+    return redirect()->route('dashboard');
+}
 }

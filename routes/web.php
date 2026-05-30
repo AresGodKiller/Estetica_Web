@@ -11,14 +11,14 @@ use App\Http\Controllers\Admin\AdminCitaController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
-// ── Rutas del cliente ─────────────────────────────────────
+// Rutas del cliente
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/servicios', [ServicioController::class, 'index'])->name('servicios.index');
     Route::resource('citas', CitaController::class)->except(['show']);
 });
 
-// ── Rutas del administrador ───────────────────────────────
+// Rutas del administrador
 Route::middleware(['auth', 'es.admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::resource('servicios', AdminServicioController::class);

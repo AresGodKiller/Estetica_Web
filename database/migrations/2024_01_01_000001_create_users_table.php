@@ -4,10 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-//crear migración de tabla users con roles
-// Autor: Axel Johab Rodríguez Ortiz — 23151212
-// Descripción: Define la estructura base de usuarios del sistema.
-//              Incluye soporte para clientes y administradores mediante el campo 'rol'.
+//Descripción: Define la estructura base de usuarios del sistema.
+//Incluye soporte para clientes y administradores mediante el campo 'rol'.
 
 return new class extends Migration
 {
