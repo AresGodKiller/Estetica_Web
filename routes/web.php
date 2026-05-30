@@ -18,7 +18,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Rutas del administrador
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'es.admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::resource('servicios', AdminServicioController::class);
     Route::resource('empleadas', AdminEmpleadaController::class);

@@ -11,10 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Modelo User — Axel Johab Rodríguez Ortiz (23151212)
  *
  * Representa tanto a clientes como a administradores del sistema.
- * El rol se distingue mediante el campo 'rol' (cliente | administrador).
- *
- * Relaciones:
- *  - hasMany(Cita) → Un usuario puede tener muchas citas agendadas
  */
 class User extends Authenticatable
 {
@@ -44,12 +40,6 @@ class User extends Authenticatable
         ];
     }
  
-    // ─── Relaciones ───────────────────────────────────────────────
- 
-    /**
-     * Un usuario (cliente) puede tener muchas citas.
-     * Relación: uno a muchos
-     */
     public function citas(): HasMany
     {
         return $this->hasMany(Cita::class);
