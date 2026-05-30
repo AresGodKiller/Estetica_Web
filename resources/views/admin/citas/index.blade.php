@@ -5,7 +5,11 @@
 
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-[#2C2020]">Todas las Citas</h2>
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
+            <a href="{{ route('admin.citas.create') }}"
+               class="bg-[#B5517A] text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#9e4169] transition">
+                + Nueva Cita
+            </a>
             @foreach (['todas', 'pendiente', 'confirmada', 'completada', 'cancelada'] as $filtro)
             <a href="{{ route('admin.citas.index', ['estado' => $filtro]) }}"
                class="text-xs px-3 py-1.5 rounded-full border transition
