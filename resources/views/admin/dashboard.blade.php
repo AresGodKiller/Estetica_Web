@@ -19,6 +19,10 @@
                class="flex items-center gap-2 px-3 py-2 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-[#F9E8F2] text-[#B5517A]' : 'hover:bg-gray-100' }}">
                Panel
             </a>
+            <a href="{{ route('admin.citas.index') }}"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg {{ request()->routeIs('admin.citas.*') ? 'bg-[#F9E8F2] text-[#B5517A]' : 'hover:bg-gray-100' }}">
+               Citas
+            </a>
             <a href="{{ route('admin.servicios.index') }}"
                class="flex items-center gap-2 px-3 py-2 rounded-lg {{ request()->routeIs('admin.servicios.*') ? 'bg-[#F9E8F2] text-[#B5517A]' : 'hover:bg-gray-100' }}">
                Servicios
@@ -61,7 +65,7 @@
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b flex justify-between items-center">
                 <h3 class="font-semibold text-[#2C2020]">Citas de Hoy</h3>
-                <a href="{{ route('citas.create') }}"
+                <a href="{{ route('admin.citas.create') }}"
                    class="bg-[#B5517A] text-white px-4 py-1.5 rounded-full text-sm hover:bg-[#9e4169] transition">
                     + Nueva Cita
                 </a>
