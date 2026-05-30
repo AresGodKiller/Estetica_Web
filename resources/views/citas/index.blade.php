@@ -19,7 +19,7 @@
 
     @if ($citas->isEmpty())
         <div class="bg-white rounded-xl shadow-sm p-10 text-center text-gray-400">
-            <p class="text-4xl mb-3">📅</p>
+            <p class="text-4xl mb-3"></p>
             <p>No tienes citas agendadas aún.</p>
             <a href="{{ route('citas.create') }}" class="text-[#B5517A] font-medium hover:underline mt-2 inline-block">
                 Agenda tu primera cita
