@@ -1,95 +1,75 @@
 @extends('layouts.admin')
-@section('title', 'Citas')
+@section('title', 'Gestión de Empleadas')
 
 @section('content')
 
     <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-[#2C2020]">Todas las Citas</h2>
-        <div class="flex gap-2 items-center">
-            <a href="{{ route('admin.citas.create') }}"
-               class="bg-[#B5517A] text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#9e4169] transition">
-                + Nueva Cita
-            </a>
-            @foreach (['todas', 'pendiente', 'confirmada', 'completada', 'cancelada'] as $filtro)
-            <a href="{{ route('admin.citas.index', ['estado' => $filtro]) }}"
-               class="text-xs px-3 py-1.5 rounded-full border transition
-                      {{ request('estado', 'todas') === $filtro ? 'bg-[#B5517A] text-white border-[#B5517A]' : 'border-gray-300 hover:bg-gray-100' }}">
-                {{ ucfirst($filtro) }}
-            </a>
-            @endforeach
-        </div>
+        <h2 class="text-2xl font-bold text-[#2C2020]">Empleadas</h2>
+        <a href="{{ route('admin.empleadas.create') }}"
+           class="bg-[#B5517A] text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-[#9e4169] transition">
+            + Agregar Empleada
+        </a>
     </div>
 
     @if (session('success'))
         <div class="bg-green-50 text-green-700 rounded-xl p-3 mb-4 text-sm">{{ session('success') }}</div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-[#F9E8F2] text-[#B5517A] font-semibold">
-                <tr>
-                    <th class="text-left px-5 py-3">Fecha</th>
-                    <th class="text-left px-5 py-3">Cliente</th>
-                    <th class="text-left px-5 py-3">Servicio</th>
-                    <th class="text-left px-5 py-3">Estilista</th>
-                    <th class="text-left px-5 py-3">Hora</th>
-                    <th class="text-left px-5 py-3">Estado</th>
-                    <th class="text-left px-5 py-3">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse ($citas as $cita)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-5 py-3">{{ $cita->fecha->format('d/m/Y') }}</td>
-                    <td class="px-5 py-3">{{ $cita->user->nombreCompleto() }}</td>
-                    <td class="px-5 py-3">{{ $cita->servicio->nombre }}</td>
-                    <td class="px-5 py-3">{{ $cita->empleada->nombreCompleto() }}</td>
-                    <td class="px-5 py-3">{{ $cita->hora_inicio }}</td>
-                    <td class="px-5 py-3">
-                        @php
-                            $colores = [
-                                'confirmada' => 'bg-green-100 text-green-700',
-                                'pendiente'  => 'bg-amber-100 text-amber-700',
-                                'cancelada'  => 'bg-red-100 text-red-700',
-                                'completada' => 'bg-blue-100 text-blue-700',
-                            ];
-                        @endphp
-                        <span class="px-3 py-1 rounded-full text-xs font-medium {{ $colores[$cita->estado] ?? '' }}">
-                            {{ ucfirst($cita->estado) }}
-                        </span>
-                    </td>
-                    <td class="px-5 py-3">
-                        <form method="POST" action="{{ route('admin.citas.estado', $cita) }}" class="flex gap-1">
-                            @csrf @method('PATCH')
-                            @if ($cita->estado === 'pendiente')
-                                <button name="estado" value="confirmada"
-                                    class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full hover:bg-green-200 transition">
-                                    ✓ Confirmar
-                                </button>
-                                <button name="estado" value="cancelada"
-                                    class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full hover:bg-red-200 transition">
-                                    ✗ Cancelar
-                                </button>
-                            @elseif ($cita->estado === 'confirmada')
-                                <button name="estado" value="completada"
-                                    class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition">
-                                    ✓ Completar
-                                </button>
-                            @else
-                                <span class="text-xs text-gray-400">—</span>
-                            @endif
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="px-5 py-8 text-center text-gray-400">No hay citas</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        @forelse ($empleadas as $empleada)
+        <div class="bg-white rounded-2xl shadow-sm p-6 {{ !$empleada->activo ? 'opacity-60' : '' }}">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-full bg-[#F9E8F2] flex items-center justify-center text-xl font-bold text-[#B5517A]">
+                    {{ strtoupper(substr($empleada->nombre, 0, 1)) }}
+                </div>
+                <div>
+                    <p class="font-semibold text-[#2C2020]">
+                        {{ $empleada->nombreCompleto() }}
+                        @if (!$empleada->activo)
+                            <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full ml-1">Inactiva</span>
+                        @endif
+                    </p>
+                    <p class="text-xs text-gray-400">{{ $empleada->telefono ?? 'Sin teléfono' }}</p>
+                </div>
+            </div>
 
-    <div class="mt-4">{{ $citas->links() }}</div>
+            <div class="mb-4">
+                <p class="text-xs text-gray-500 font-medium mb-1">Servicios:</p>
+                <div class="flex flex-wrap gap-1">
+                    @forelse ($empleada->servicios as $s)
+                        <span class="bg-[#F9E8F2] text-[#B5517A] text-xs px-2 py-0.5 rounded-full">{{ $s->nombre }}</span>
+                    @empty
+                        <span class="text-xs text-gray-400">Sin servicios asignados</span>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                @if ($empleada->activo)
+                    <a href="{{ route('admin.empleadas.edit', $empleada) }}"
+                       class="flex-1 text-center text-xs border border-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-100 transition">
+                        Editar
+                    </a>
+                @endif
+
+                <form method="POST" action="{{ route('admin.empleadas.destroy', $empleada) }}">
+                    @csrf @method('DELETE')
+                    @if ($empleada->activo)
+                        @php $tieneCitas = $empleada->citas()->count() > 0; @endphp
+                        <button type="submit"
+                            onclick="return confirm('{{ $tieneCitas ? '¿Desactivar esta empleada? Tiene citas registradas y no puede eliminarse.' : '¿Eliminar esta empleada? Esta acción no se puede deshacer.' }}')"
+                            class="text-xs border border-red-300 text-red-500 px-3 py-1.5 rounded-full hover:bg-red-50 transition">
+                            {{ $tieneCitas ? 'Desactivar' : 'Eliminar' }}
+                        </button>
+                    @else
+                        <span class="text-xs text-gray-400 px-3 py-1.5">Inactiva</span>
+                    @endif
+                </form>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-3 text-center text-gray-400 py-10">No hay empleadas registradas</div>
+        @endforelse
+    </div>
 
 @endsection
