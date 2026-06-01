@@ -68,8 +68,18 @@ class AdminEmpleadaController extends Controller
     }
 
     public function destroy(Empleada $empleada)
-    {
-        $empleada->delete();
-        return redirect()->route('admin.empleadas.index')->with('success', 'Empleada eliminada.');
+{
+    // Si tiene citas, solo desactivar en lugar de eliminar
+    if ($empleada->citas()->count() > 0) {
+        $empleada->update(['activo' => false]);
+        return redirect()->route('admin.empleadas.index')
+            ->with('success', 'La empleada tiene citas registradas y fue desactivada en lugar de eliminada.');
     }
+
+    $empleada->servicios()->detach();
+    $empleada->delete();
+
+    return redirect()->route('admin.empleadas.index')
+        ->with('success', 'Empleada eliminada correctamente.');
+}
 }
